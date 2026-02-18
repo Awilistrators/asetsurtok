@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tambah Aset</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f9;
+  padding:20px;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+}
+
+form{
+  background:white;
+  padding:20px;
+  border-radius:8px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+}
+
+button{
+  background:#222;
+  color:white;
+  padding:12px;
+  border:none;
+  cursor:pointer;
+  width:100%;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>Tambah Aset Baru</h2>
+
+<form id="asetForm">
+  <input placeholder="No" id="No" required>
+  <input placeholder="Nama Barang" id="NamaBarang" required>
+
+  <select id="Kategori">
+    <option>Laptop</option>
+    <option>Handphone</option>
+    <option>Tablet</option>
+  </select>
+
+  <input placeholder="Merk & Model" id="MerkModel">
+  <input placeholder="Serial Number / IMEI" id="Serial">
+  <input placeholder="Spesifikasi" id="Spesifikasi">
+
+  <select id="Status">
+    <option>Aktif</option>
+    <option>Dipinjam</option>
+    <option>Cadangan</option>
+    <option>Perbaikan</option>
+    <option>Rusak</option>
+  </select>
+
+  <input placeholder="Nama Pengguna / PIC" id="PIC">
+  <input placeholder="Lokasi" id="Lokasi">
+  <input placeholder="Keterangan" id="Keterangan">
+
+  <button type="submit">Simpan Aset</button>
+</form>
+
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzVoim5hVfCT13pd--1kLO7lWsIHCUl5t_Zh0yJD-6C9-2otrNlheZwmSXTpwSSVTo/exec";
+
+document.getElementById("asetForm").addEventListener("submit", e=>{
+  e.preventDefault();
+
+  const data = {
+    No: No.value,
+    NamaBarang: NamaBarang.value,
+    Kategori: Kategori.value,
+    MerkModel: MerkModel.value,
+    Serial: Serial.value,
+    Spesifikasi: Spesifikasi.value,
+    Status: Status.value,
+    PIC: PIC.value,
+    Lokasi: Lokasi.value,
+    Keterangan: Keterangan.value
+  };
+
+  fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify(data)
+  })
+  .then(res=>res.text())
+  .then(()=>{
+    alert("Aset berhasil ditambahkan!");
+    window.location.href="index.html";
+  });
+});
+</script>
+
+</body>
+</html>
