@@ -11,32 +11,61 @@ body{
   padding:20px;
 }
 
+h1{
+  text-align:center;
+  color:#0a2a66;
+}
+
 .container{
-  max-width:600px;
+  max-width:1000px;
   margin:auto;
 }
 
-form{
-  background:white;
-  padding:20px;
-  border-radius:8px;
-}
-
-input, select{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:15px;
 }
 
 button{
-  background:#222;
+  background:#0a2a66;
   color:white;
-  padding:12px;
+  padding:10px 15px;
   border:none;
   cursor:pointer;
+  border-radius:6px;
+}
+
+button:hover{
+  background:#081f4d;
+}
+
+table{
   width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:8px;
+}
+
+th{
+  background:#0a2a66;
+  color:white;
+  text-align:center;   /* header kolom center */
+}
+
+td{
+  text-align:left;     /* isi data tetap rapi kiri */
+}
+
+tr:hover{
+  background:#eef2ff;
 }
 </style>
+
 </head>
 <body>
 
