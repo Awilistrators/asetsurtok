@@ -2,7 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Tambah Aset</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Tambah Aset Baru</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body {
@@ -10,17 +14,53 @@ body {
   background: #f4f6f9;
   margin: 0;
   padding: 20px;
-  color: #0a2a66;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color:#0a2a66;
+}
+
+label {
+  font-weight: 600;
+  font-size: 14px;
+  color:#0a2a66;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus{
+  border-color:#0a2a66;
+  outline:none;
 }
 
 button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: #0a2a66;
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -29,61 +69,73 @@ button:hover {
   background: #081f4d;
 }
 
-.popup-box {
-  background: white;
-  padding: 20px 30px;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  text-align: center;
-  color: #0a2a66;
+.back {
+  text-align:center;
+  margin-top:15px;
 }
 
-#popupBtn {
-  margin-top: 15px;
-  width: 100%;
-  background: #0a2a66;
-  color: white;
+.back a{
+  text-decoration:none;
+  color:#0a2a66;
+  font-size:14px;
 }
-
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
+  <h2>TAMBAH ASET BARU</h2>
 
-<h2>Tambah Aset Baru</h2>
+  <form id="asetForm">
 
-<form id="asetForm">
-  <input placeholder="No" id="No" required>
-  <input placeholder="Nama Barang" id="NamaBarang" required>
+    <label>No</label>
+    <input id="No" required>
 
-  <select id="Kategori">
-    <option>Laptop</option>
-    <option>Handphone</option>
-    <option>Tablet</option>
-  </select>
+    <label>Nama Barang</label>
+    <input id="NamaBarang" required>
 
-  <input placeholder="Merk & Model" id="MerkModel">
-  <input placeholder="Serial Number / IMEI" id="Serial">
-  <input placeholder="Spesifikasi" id="Spesifikasi">
+    <label>Kategori</label>
+    <select id="Kategori">
+      <option>Laptop</option>
+      <option>Handphone</option>
+      <option>Tablet</option>
+    </select>
 
-  <select id="Status">
-    <option>Aktif</option>
-    <option>Dipinjam</option>
-    <option>Cadangan</option>
-    <option>Perbaikan</option>
-    <option>Rusak</option>
-  </select>
+    <label>Merk & Model</label>
+    <input id="MerkModel">
 
-  <input placeholder="Nama Pengguna / PIC" id="PIC">
-  <input placeholder="Lokasi" id="Lokasi">
-  <input placeholder="Keterangan" id="Keterangan">
+    <label>Serial Number / IMEI</label>
+    <input id="Serial">
 
-  <button type="submit">Simpan Aset</button>
-</form>
+    <label>Spesifikasi</label>
+    <input id="Spesifikasi">
 
+    <label>Status</label>
+    <select id="Status">
+      <option>Aktif</option>
+      <option>Dipinjam</option>
+      <option>Cadangan</option>
+      <option>Perbaikan</option>
+      <option>Rusak</option>
+    </select>
+
+    <label>Nama Pengguna / PIC</label>
+    <input id="PIC">
+
+    <label>Lokasi</label>
+    <input id="Lokasi">
+
+    <label>Keterangan</label>
+    <input id="Keterangan">
+
+    <button type="submit">Simpan Aset</button>
+
+  </form>
+
+  <div class="back">
+    <a href="index.html">← Kembali ke Data Aset</a>
+  </div>
 </div>
 
 <script>
@@ -111,7 +163,7 @@ document.getElementById("asetForm").addEventListener("submit", e=>{
   })
   .then(res=>res.text())
   .then(()=>{
-    alert("Aset berhasil ditambahkan!");
+    alert("Aset berhasil ditambahkan");
     window.location.href="index.html";
   });
 });
