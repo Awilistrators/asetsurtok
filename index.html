@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Data Aset Suryatokoku</title>
-
 <style>
 body{
   font-family:Arial;
@@ -13,7 +7,7 @@ body{
 
 h1{
   text-align:center;
-  color:#0a2a66; /* navy */
+  color:#0a2a66;
 }
 
 .container{
@@ -46,64 +40,22 @@ table{
   background:white;
 }
 
-th,td{
+th, td{
   border:1px solid #ddd;
   padding:8px;
 }
 
 th{
-  background:#0a2a66; /* navy header */
+  background:#0a2a66;
   color:white;
-  text-align:left;
+  text-align:center;   /* header kolom center */
+}
+
+td{
+  text-align:left;     /* isi data tetap rapi kiri */
 }
 
 tr:hover{
   background:#eef2ff;
 }
 </style>
-
-</head>
-<body>
-
-<div class="container">
-
-<h1>DATA ASET SURYATOKOKU</h1>
-
-<div class="topbar">
-  <div></div>
-  <button onclick="window.location.href='tambah.html'">
-    ➕ Tambah Aset
-  </button>
-</div>
-
-<table id="asetTable">
-  <thead></thead>
-  <tbody></tbody>
-</table>
-
-</div>
-
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzVoim5hVfCT13pd--1kLO7lWsIHCUl5t_Zh0yJD-6C9-2otrNlheZwmSXTpwSSVTo/exec";
-
-fetch(API_URL)
-.then(res => res.json())
-.then(data => {
-  const head = document.querySelector("#asetTable thead");
-  const body = document.querySelector("#asetTable tbody");
-
-  let headers = Object.keys(data[0]);
-
-  head.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
-
-  data.forEach(row => {
-    let tr="<tr>";
-    headers.forEach(h => tr+=`<td>${row[h]??""}</td>`);
-    tr+="</tr>";
-    body.innerHTML+=tr;
-  });
-});
-</script>
-
-</body>
-</html>
