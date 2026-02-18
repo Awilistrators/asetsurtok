@@ -1,66 +1,157 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Aset Suryatokoku</title>
-  <style>
-    body{
-      font-family: Arial;
-      background:#f4f6f9;
-      padding:20px;
-    }
-    h1{
-      text-align:center;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      background:white;
-    }
-    th, td{
-      border:1px solid #ddd;
-      padding:8px;
-      text-align:left;
-    }
-    th{
-      background:#222;
-      color:white;
-    }
-    tr:hover{
-      background:#f1f1f1;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Aset Suryatokoku</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f9;
+  padding:20px;
+}
+
+h1{ text-align:center; }
+
+.container{
+  max-width:1000px;
+  margin:auto;
+}
+
+form{
+  background:white;
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:20px;
+}
+
+input, select{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+
+button{
+  background:#222;
+  color:white;
+  padding:10px;
+  border:none;
+  cursor:pointer;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:8px;
+}
+
+th{
+  background:#222;
+  color:white;
+}
+</style>
 </head>
 <body>
 
+<div class="container">
+
 <h1>DATA ASET SURYATOKOKU</h1>
+
+<form id="asetForm">
+  <input placeholder="No" id="No" required>
+  <input placeholder="Nama Barang" id="NamaBarang" required>
+
+  <select id="Kategori">
+    <option>Laptop</option>
+    <option>Handphone</option>
+    <option>Tablet</option>
+  </select>
+
+  <input placeholder="Merk & Model" id="MerkModel">
+  <input placeholder="Serial Number / IMEI" id="Serial">
+  <input placeholder="Spesifikasi" id="Spesifikasi">
+
+  <select id="Status">
+    <option>Aktif</option>
+    <option>Dipinjam</option>
+    <option>Cadangan</option>
+    <option>Perbaikan</option>
+    <option>Rusak</option>
+  </select>
+
+  <input placeholder="Nama Pengguna / PIC" id="PIC">
+  <input placeholder="Lokasi" id="Lokasi">
+  <input placeholder="Keterangan" id="Keterangan">
+
+  <button type="submit">Simpan Aset</button>
+</form>
 
 <table id="asetTable">
   <thead></thead>
   <tbody></tbody>
 </table>
 
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwVc_pl8i-xCjm1x6Id3AvzqqcW6dBEvcBHc2_hG8MaM2l0NZ8czwJUkl2QDKHTmT_l/exec";
+</div>
 
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzVoim5hVfCT13pd--1kLO7lWsIHCUl5t_Zh0yJD-6C9-2otrNlheZwmSXTpwSSVTo/exec";
+
+// LOAD DATA
+function loadData(){
 fetch(API_URL)
 .then(res => res.json())
 .then(data => {
-  const tableHead = document.querySelector("#asetTable thead");
-  const tableBody = document.querySelector("#asetTable tbody");
+  const head = document.querySelector("#asetTable thead");
+  const body = document.querySelector("#asetTable tbody");
 
-  // Header
+  head.innerHTML="";
+  body.innerHTML="";
+
   let headers = Object.keys(data[0]);
-  tableHead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
+  head.innerHTML = "<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>";
 
-  // Rows
-  data.forEach(row => {
-    let tr = "<tr>";
-    headers.forEach(h => {
-      tr += `<td>${row[h] ?? ""}</td>`;
-    });
-    tr += "</tr>";
-    tableBody.innerHTML += tr;
+  data.forEach(row=>{
+    let tr="<tr>";
+    headers.forEach(h=> tr+=`<td>${row[h]??""}</td>`);
+    tr+="</tr>";
+    body.innerHTML+=tr;
+  });
+});
+}
+
+loadData();
+
+// SUBMIT FORM
+document.getElementById("asetForm").addEventListener("submit", e=>{
+  e.preventDefault();
+
+  const data = {
+    No: No.value,
+    NamaBarang: NamaBarang.value,
+    Kategori: Kategori.value,
+    MerkModel: MerkModel.value,
+    Serial: Serial.value,
+    Spesifikasi: Spesifikasi.value,
+    Status: Status.value,
+    PIC: PIC.value,
+    Lokasi: Lokasi.value,
+    Keterangan: Keterangan.value
+  };
+
+  fetch(API_URL, {
+    method:"POST",
+    body: JSON.stringify(data)
+  })
+  .then(res=>res.text())
+  .then(()=>{
+    alert("Aset berhasil ditambahkan!");
+    document.getElementById("asetForm").reset();
+    loadData();
   });
 });
 </script>
