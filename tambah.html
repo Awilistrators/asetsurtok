@@ -89,9 +89,6 @@ button:hover {
 
   <form id="asetForm">
 
-    <label>No</label>
-    <input id="No" required>
-
     <label>Nama Barang</label>
     <input id="NamaBarang" required>
 
@@ -141,13 +138,12 @@ button:hover {
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzVoim5hVfCT13pd--1kLO7lWsIHCUl5t_Zh0yJD-6C9-2otrNlheZwmSXTpwSSVTo/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzpdqWmPbQ_ZhqsGk34SjKML5katvs7FA6xjcUTu5T4d4Kkxg3L5c7ZQlv4HPyX5g8x/exec";
 
 document.getElementById("asetForm").addEventListener("submit", e=>{
   e.preventDefault();
 
   const data = {
-    No: No.value,
     NamaBarang: NamaBarang.value,
     Kategori: Kategori.value,
     MerkModel: MerkModel.value,
