@@ -272,7 +272,20 @@ function renderTable(data){
   data.forEach(row => {
     let tr="<tr>";
 
-    headers.forEach(h => tr+=`<td>${row[h] ?? ""}</td>`);
+    // kolom yang ingin di tengah
+const centerColumns = [
+  "No",
+  "Kategori",
+  "Serial Number /Imei",
+  "Status",
+  "Nama Pengguna /PIC",
+  "Lokasi"
+];
+
+headers.forEach(h => {
+  const align = centerColumns.includes(h) ? "center" : "left";
+  tr += `<td style="text-align:${align}">${row[h] ?? ""}</td>`;
+});
 
     tr+=`
     <td style="text-align:center">
