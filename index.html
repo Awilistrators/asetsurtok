@@ -88,42 +88,94 @@ tr:hover{
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzpdqWmPbQ_ZhqsGk34SjKML5katvs7FA6xjcUTu5T4d4Kkxg3L5c7ZQlv4HPyX5g8x/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw2LrYiqBzd4HpGb7EfikPg4vjRCfExfZFGqmjLi25398sqicLS31aTX_8Oe84b1j7W/exec";
 
+function loadData(){
 fetch(API_URL)
 .then(res => res.json())
 .then(data => {
+
   const head = document.querySelector("#asetTable thead");
   const body = document.querySelector("#asetTable tbody");
 
-  let headers = Object.keys(data[0]);
+  body.innerHTML="";
 
-  // buat header
-  head.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
+  let headers = Object.keys(data[0]).filter(h=>h!="rowIndex");
 
-  // kolom yang ingin di-center
-  const centerColumns = [
-    "No",
-    "Kategori",
-    "Serial Number/ Imei",
-    "Status",
-    "Nama Pengguna/ PIC",
-    "Lokasi"
-  ];
+  head.innerHTML = "<tr>" +
+    headers.map(h => `<th>${h}</th>`).join("") +
+    "<th>Action</th></tr>";
 
   data.forEach(row => {
     let tr="<tr>";
 
     headers.forEach(h => {
-      let align = centerColumns.includes(h) ? "center" : "left";
-      tr += `<td style="text-align:${align}">${row[h] ?? ""}</td>`;
+      tr+=`<td>${row[h] ?? ""}</td>`;
     });
+
+    tr += `
+      <td style="text-align:center">
+        <button onclick='editData(${JSON.stringify(row)})'>✏️</button>
+        <button onclick='deleteData(${row.rowIndex})'>🗑</button>
+      </td>
+    `;
 
     tr+="</tr>";
     body.innerHTML+=tr;
   });
+
 });
+}
+
+loadData();
+
+// DELETE
+function deleteData(rowIndex){
+  if(!confirm("Hapus aset ini?")) return;
+
+  fetch(API_URL,{
+    method:"DELETE",
+    body: JSON.stringify({rowIndex})
+  })
+  .then(()=> loadData());
+}
+
+// EDIT
+function editData(row){
+  const nama = prompt("Nama Barang:", row["Nama Barang"]);
+  if(nama===null) return;
+
+  const kategori = prompt("Kategori:", row["Kategori"]);
+  const merk = prompt("Merk & Model:", row["Merk & Model"]);
+  const serial = prompt("Serial:", row["Serial Number / IMEI"]);
+  const spek = prompt("Spesifikasi:", row["Spesifikasi"]);
+  const status = prompt("Status:", row["Status"]);
+  const pic = prompt("PIC:", row["Nama Pengguna / PIC"]);
+  const lokasi = prompt("Lokasi:", row["Lokasi"]);
+  const ket = prompt("Keterangan:", row["Keterangan"]);
+
+  const updated = {
+    rowIndex: row.rowIndex,
+    No: row.No,
+    NamaBarang: nama,
+    Kategori: kategori,
+    MerkModel: merk,
+    Serial: serial,
+    Spesifikasi: spek,
+    Status: status,
+    PIC: pic,
+    Lokasi: lokasi,
+    Keterangan: ket
+  };
+
+  fetch(API_URL,{
+    method:"PUT",
+    body: JSON.stringify(updated)
+  })
+  .then(()=> loadData());
+}
 </script>
+
 
 
 </body>
