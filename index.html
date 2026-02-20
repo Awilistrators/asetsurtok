@@ -108,6 +108,20 @@ tr:hover{
   padding:10px;
   margin-bottom:10px;
 }
+
+.modal-box h3{
+  margin-top:0;
+}
+
+.detail-row{
+  margin-bottom:6px;
+}
+
+.detail-label{
+  font-weight:bold;
+  color:#0a2a66;
+}
+
 </style>
 </head>
 
@@ -150,6 +164,16 @@ tr:hover{
     <button onclick="saveEdit()">Simpan Perubahan</button>
   </div>
 </div>
+
+<!-- MODAL DETAIL -->
+<div id="detailModal" class="modal">
+  <div class="modal-box">
+    <h3 style="color:#0a2a66;text-align:center;">Detail Aset</h3>
+    <div id="detailContent" style="line-height:1.6;font-size:14px;"></div>
+    <button onclick="closeDetail()">Tutup</button>
+  </div>
+</div>
+
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbw2LrYiqBzd4HpGb7EfikPg4vjRCfExfZFGqmjLi25398sqicLS31aTX_8Oe84b1j7W/exec";
@@ -207,19 +231,26 @@ document.getElementById("searchBox").addEventListener("input", e=>{
 
 // DETAIL POPUP
 function showDetail(row){
-  alert(
-`DETAIL ASET
+  const content = `
+    <div class="detail-row"><span class="detail-label">Nama:</span> ${row["Nama Barang"]}</div>
+    <div class="detail-row"><span class="detail-label">Kategori:</span> ${row["Kategori"]}</div>
+    <div class="detail-row"><span class="detail-label">Merk & Model:</span> ${row["Merk & Model"]}</div>
+    <div class="detail-row"><span class="detail-label">Serial / IMEI:</span> ${row["Serial Number / IMEI"]}</div>
+    <div class="detail-row"><span class="detail-label">Spesifikasi:</span> ${row["Spesifikasi"]}</div>
+    <div class="detail-row"><span class="detail-label">Status:</span> ${row["Status"]}</div>
+    <div class="detail-row"><span class="detail-label">PIC:</span> ${row["Nama Pengguna / PIC"]}</div>
+    <div class="detail-row"><span class="detail-label">Lokasi:</span> ${row["Lokasi"]}</div>
+    <div class="detail-row"><span class="detail-label">Keterangan:</span> ${row["Keterangan"]}</div>
+  `;
 
-Nama: ${row["Nama Barang"]}
-Kategori: ${row["Kategori"]}
-Merk: ${row["Merk & Model"]}
-Serial: ${row["Serial Number / IMEI"]}
-PIC: ${row["Nama Pengguna / PIC"]}
-Lokasi: ${row["Lokasi"]}
-Status: ${row["Status"]}
-Keterangan: ${row["Keterangan"]}`
-  );
+  document.getElementById("detailContent").innerHTML = content;
+  document.getElementById("detailModal").style.display = "flex";
 }
+
+function closeDetail(){
+  document.getElementById("detailModal").style.display = "none";
+}
+
 
 // ADMIN CHECK
 function checkAdmin(){
