@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Data Aset Suryatokoku</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 body{
@@ -24,7 +27,7 @@ h1{
 .topbar{
   display:flex;
   justify-content:space-between;
-  margin-bottom:15px;
+  margin-bottom:10px;
 }
 
 button{
@@ -38,6 +41,14 @@ button{
 
 button:hover{
   background:#081f4d;
+}
+
+#searchBox{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 
 table{
@@ -54,19 +65,52 @@ th, td{
 th{
   background:#0a2a66;
   color:white;
-  text-align:center;   /* header kolom center */
-}
-
-td{
-  text-align:left;     /* isi data tetap rapi kiri */
+  text-align:center;
 }
 
 tr:hover{
   background:#eef2ff;
 }
-</style>
 
+.icon-btn{
+  border:none;
+  background:none;
+  cursor:pointer;
+  font-size:16px;
+  margin:0 4px;
+}
+
+.icon-btn.edit{ color:#0a2a66; }
+.icon-btn.delete{ color:#c0392b; }
+.icon-btn.view{ color:#16a085; }
+
+/* MODAL */
+.modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.25);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-box{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:420px;
+}
+
+.modal-box input{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
@@ -80,6 +124,8 @@ tr:hover{
   </button>
 </div>
 
+<input type="text" id="searchBox" placeholder="🔍 Cari aset...">
+
 <table id="asetTable">
   <thead></thead>
   <tbody></tbody>
@@ -87,17 +133,44 @@ tr:hover{
 
 </div>
 
+<!-- MODAL EDIT -->
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <h3>Edit Aset</h3>
+
+    <input id="editNama" placeholder="Nama Barang">
+    <input id="editMerk" placeholder="Merk & Model">
+    <input id="editSerial" placeholder="Serial / IMEI">
+    <input id="editSpek" placeholder="Spesifikasi">
+    <input id="editStatus" placeholder="Status">
+    <input id="editPIC" placeholder="PIC">
+    <input id="editLokasi" placeholder="Lokasi">
+    <input id="editKet" placeholder="Keterangan">
+
+    <button onclick="saveEdit()">Simpan Perubahan</button>
+  </div>
+</div>
+
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbw2LrYiqBzd4HpGb7EfikPg4vjRCfExfZFGqmjLi25398sqicLS31aTX_8Oe84b1j7W/exec";
+const ADMIN_PASSWORD = "admin123"; // ganti password
+
+let dataGlobal=[];
+let lastDeleted=null;
+let editRowIndex=null;
 
 function loadData(){
 fetch(API_URL)
 .then(res => res.json())
 .then(data => {
+  dataGlobal=data;
+  renderTable(data);
+});
+}
 
+function renderTable(data){
   const head = document.querySelector("#asetTable thead");
   const body = document.querySelector("#asetTable tbody");
-
   body.innerHTML="";
 
   let headers = Object.keys(data[0]).filter(h=>h!="rowIndex");
@@ -109,74 +182,133 @@ fetch(API_URL)
   data.forEach(row => {
     let tr="<tr>";
 
-    headers.forEach(h => {
-      tr+=`<td>${row[h] ?? ""}</td>`;
-    });
+    headers.forEach(h => tr+=`<td>${row[h] ?? ""}</td>`);
 
-    tr += `
-      <td style="text-align:center">
-        <button onclick='editData(${JSON.stringify(row)})'>✏️</button>
-        <button onclick='deleteData(${row.rowIndex})'>🗑</button>
-      </td>
-    `;
+    tr+=`
+    <td style="text-align:center">
+      <button class="icon-btn view" onclick='showDetail(${JSON.stringify(row)})'><i class="fa fa-eye"></i></button>
+      <button class="icon-btn edit" onclick='openEdit(${JSON.stringify(row)})'><i class="fa fa-pen"></i></button>
+      <button class="icon-btn delete" onclick='deleteData(${JSON.stringify(row)})'><i class="fa fa-trash"></i></button>
+    </td>`;
 
     tr+="</tr>";
     body.innerHTML+=tr;
   });
-
-});
 }
 
-loadData();
+// SEARCH
+document.getElementById("searchBox").addEventListener("input", e=>{
+  const key=e.target.value.toLowerCase();
+  const filtered=dataGlobal.filter(r =>
+    Object.values(r).join(" ").toLowerCase().includes(key)
+  );
+  renderTable(filtered);
+});
 
-// DELETE
-function deleteData(rowIndex){
+// DETAIL POPUP
+function showDetail(row){
+  alert(
+`DETAIL ASET
+
+Nama: ${row["Nama Barang"]}
+Kategori: ${row["Kategori"]}
+Merk: ${row["Merk & Model"]}
+Serial: ${row["Serial Number / IMEI"]}
+PIC: ${row["Nama Pengguna / PIC"]}
+Lokasi: ${row["Lokasi"]}
+Status: ${row["Status"]}
+Keterangan: ${row["Keterangan"]}`
+  );
+}
+
+// ADMIN CHECK
+function checkAdmin(){
+  const pass=prompt("Masukkan password admin:");
+  return pass===ADMIN_PASSWORD;
+}
+
+// OPEN EDIT
+function openEdit(row){
+  if(!checkAdmin()) return;
+
+  editRowIndex=row.rowIndex;
+
+  editNama.value=row["Nama Barang"];
+  editMerk.value=row["Merk & Model"];
+  editSerial.value=row["Serial Number / IMEI"];
+  editSpek.value=row["Spesifikasi"];
+  editStatus.value=row["Status"];
+  editPIC.value=row["Nama Pengguna / PIC"];
+  editLokasi.value=row["Lokasi"];
+  editKet.value=row["Keterangan"];
+
+  modal.style.display="flex";
+}
+
+// SAVE EDIT
+function saveEdit(){
+  const updated={
+    rowIndex:editRowIndex,
+    No:"",
+    NamaBarang:editNama.value,
+    Kategori:"",
+    MerkModel:editMerk.value,
+    Serial:editSerial.value,
+    Spesifikasi:editSpek.value,
+    Status:editStatus.value,
+    PIC:editPIC.value,
+    Lokasi:editLokasi.value,
+    Keterangan:editKet.value
+  };
+
+  fetch(API_URL,{method:"PUT",body:JSON.stringify(updated)})
+  .then(()=>{
+    modal.style.display="none";
+    loadData();
+  });
+}
+
+// DELETE + UNDO
+function deleteData(row){
+  if(!checkAdmin()) return;
   if(!confirm("Hapus aset ini?")) return;
+
+  lastDeleted=row;
 
   fetch(API_URL,{
     method:"DELETE",
-    body: JSON.stringify({rowIndex})
+    body: JSON.stringify({rowIndex:row.rowIndex})
   })
-  .then(()=> loadData());
+  .then(()=>{
+    if(confirm("Aset dihapus. Undo?")){
+      undoDelete();
+    }else{
+      loadData();
+    }
+  });
 }
 
-// EDIT
-function editData(row){
-  const nama = prompt("Nama Barang:", row["Nama Barang"]);
-  if(nama===null) return;
-
-  const kategori = prompt("Kategori:", row["Kategori"]);
-  const merk = prompt("Merk & Model:", row["Merk & Model"]);
-  const serial = prompt("Serial:", row["Serial Number / IMEI"]);
-  const spek = prompt("Spesifikasi:", row["Spesifikasi"]);
-  const status = prompt("Status:", row["Status"]);
-  const pic = prompt("PIC:", row["Nama Pengguna / PIC"]);
-  const lokasi = prompt("Lokasi:", row["Lokasi"]);
-  const ket = prompt("Keterangan:", row["Keterangan"]);
-
-  const updated = {
-    rowIndex: row.rowIndex,
-    No: row.No,
-    NamaBarang: nama,
-    Kategori: kategori,
-    MerkModel: merk,
-    Serial: serial,
-    Spesifikasi: spek,
-    Status: status,
-    PIC: pic,
-    Lokasi: lokasi,
-    Keterangan: ket
-  };
+function undoDelete(){
+  if(!lastDeleted) return;
 
   fetch(API_URL,{
-    method:"PUT",
-    body: JSON.stringify(updated)
-  })
-  .then(()=> loadData());
+    method:"POST",
+    body: JSON.stringify({
+      NamaBarang:lastDeleted["Nama Barang"],
+      Kategori:lastDeleted["Kategori"],
+      MerkModel:lastDeleted["Merk & Model"],
+      Serial:lastDeleted["Serial Number / IMEI"],
+      Spesifikasi:lastDeleted["Spesifikasi"],
+      Status:lastDeleted["Status"],
+      PIC:lastDeleted["Nama Pengguna / PIC"],
+      Lokasi:lastDeleted["Lokasi"],
+      Keterangan:lastDeleted["Keterangan"]
+    })
+  }).then(loadData);
 }
+
+loadData();
 </script>
-
-
 
 </body>
 </html>
