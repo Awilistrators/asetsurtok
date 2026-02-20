@@ -122,6 +122,41 @@ tr:hover{
   color:#0a2a66;
 }
 
+.edit-box{
+  max-width:480px;
+  width:95%;
+}
+
+.edit-box h2{
+  text-align:center;
+  color:#0a2a66;
+  margin-bottom:15px;
+}
+
+.edit-box label{
+  font-weight:600;
+  font-size:14px;
+  color:#0a2a66;
+}
+
+.edit-box input,
+.edit-box select{
+  width:100%;
+  padding:12px;
+  margin-top:5px;
+  margin-bottom:14px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+
+.edit-box button{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  font-weight:600;
+}
+
 </style>
 </head>
 
@@ -149,21 +184,52 @@ tr:hover{
 
 <!-- MODAL EDIT -->
 <div id="modal" class="modal">
-  <div class="modal-box">
-    <h3>Edit Aset</h3>
+  <div class="modal-box edit-box">
 
-    <input id="editNama" placeholder="Nama Barang">
-    <input id="editMerk" placeholder="Merk & Model">
-    <input id="editSerial" placeholder="Serial / IMEI">
-    <input id="editSpek" placeholder="Spesifikasi">
-    <input id="editStatus" placeholder="Status">
-    <input id="editPIC" placeholder="PIC">
-    <input id="editLokasi" placeholder="Lokasi">
-    <input id="editKet" placeholder="Keterangan">
+    <h2>Edit Aset</h2>
+
+    <label>Nama Barang</label>
+    <input id="editNama">
+
+    <label>Kategori</label>
+    <select id="editKategori">
+      <option>Laptop</option>
+      <option>Handphone</option>
+      <option>Tablet</option>
+    </select>
+
+    <label>Merk & Model</label>
+    <input id="editMerk">
+
+    <label>Serial / IMEI</label>
+    <input id="editSerial">
+
+    <label>Spesifikasi</label>
+    <input id="editSpek">
+
+    <label>Status</label>
+    <select id="editStatus">
+      <option>Aktif</option>
+      <option>Dipinjam</option>
+      <option>Cadangan</option>
+      <option>Perbaikan</option>
+      <option>Rusak</option>
+    </select>
+
+    <label>Nama Pengguna / PIC</label>
+    <input id="editPIC">
+
+    <label>Lokasi</label>
+    <input id="editLokasi">
+
+    <label>Keterangan</label>
+    <input id="editKet">
 
     <button onclick="saveEdit()">Simpan Perubahan</button>
+
   </div>
 </div>
+
 
 <!-- MODAL DETAIL -->
 <div id="detailModal" class="modal">
@@ -262,42 +328,49 @@ function checkAdmin(){
 function openEdit(row){
   if(!checkAdmin()) return;
 
-  editRowIndex=row.rowIndex;
+  editRowIndex = row.rowIndex;
 
-  editNama.value=row["Nama Barang"];
-  editMerk.value=row["Merk & Model"];
-  editSerial.value=row["Serial Number / IMEI"];
-  editSpek.value=row["Spesifikasi"];
-  editStatus.value=row["Status"];
-  editPIC.value=row["Nama Pengguna / PIC"];
-  editLokasi.value=row["Lokasi"];
-  editKet.value=row["Keterangan"];
+  editNama.value = row["Nama Barang"] || "";
+  editKategori.value = row["Kategori"] || "Laptop";
+  editMerk.value = row["Merk & Model"] || "";
+  editSerial.value = row["Serial Number / IMEI"] || "";
+  editSpek.value = row["Spesifikasi"] || "";
+  editStatus.value = row["Status"] || "Aktif";
+  editPIC.value = row["Nama Pengguna / PIC"] || "";
+  editLokasi.value = row["Lokasi"] || "";
+  editKet.value = row["Keterangan"] || "";
 
-  modal.style.display="flex";
+  document.getElementById("modal").style.display = "flex";
 }
+
 
 // SAVE EDIT
 function saveEdit(){
-  const updated={
-    rowIndex:editRowIndex,
-    No:"",
-    NamaBarang:editNama.value,
-    Kategori:"",
-    MerkModel:editMerk.value,
-    Serial:editSerial.value,
-    Spesifikasi:editSpek.value,
-    Status:editStatus.value,
-    PIC:editPIC.value,
-    Lokasi:editLokasi.value,
-    Keterangan:editKet.value
+
+  const updated = {
+    rowIndex: editRowIndex,
+    No: "",
+    NamaBarang: editNama.value,
+    Kategori: editKategori.value,
+    MerkModel: editMerk.value,
+    Serial: editSerial.value,
+    Spesifikasi: editSpek.value,
+    Status: editStatus.value,
+    PIC: editPIC.value,
+    Lokasi: editLokasi.value,
+    Keterangan: editKet.value
   };
 
-  fetch(API_URL,{method:"PUT",body:JSON.stringify(updated)})
+  fetch(API_URL,{
+    method:"PUT",
+    body: JSON.stringify(updated)
+  })
   .then(()=>{
-    modal.style.display="none";
+    document.getElementById("modal").style.display = "none";
     loadData();
   });
 }
+
 
 // DELETE + UNDO
 function deleteData(row){
